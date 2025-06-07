@@ -13,21 +13,43 @@ const Register = () => {
   });
   const navigate = useNavigate();
 
+  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // handleSubmit function to send registration data to the server
   const handleSubmit = async (e) => {
   e.preventDefault();
+  if (formData.username.length < 3) {
+      alert("Username must be at least 3 characters long.");
+      return;
+    }
+   if (formData.password.length < 6) {
+      alert("Password must be at least 6 characters long.");
+      return;
+    }
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      alert("Phone number must be exactly 10 digits.");
+      return;
+    }
   try {
-    const response = await axios.post("http://localhost:5000/api/register", formData);
-    console.log("Registration successful:", response.data);
+    console.log(`${import.meta.env.VITE_API_URL}/api/register`)
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/register`, formData);
+    console.log("Working")
+    console.log("Registration successful:", response);
     alert("Registration successful!");
     navigate("/login")
   } catch (error) {
-    console.error("Registration error:", error);
-    alert("Failed to register.");
+    if ( error.response.data.msg) {
+      alert(error.response.data.msg); 
+    } else {
+      console.error("Registration error:", error);
+      alert("Failed to register. Please try again.");
+    }
   }
 };
 

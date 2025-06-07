@@ -19,15 +19,19 @@ const Login = () => {
  const handleSubmit = async (e) => {
   e.preventDefault();
   try {
-    const response = await axios.post("http://localhost:5000/api/login", formData);
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, formData);
     console.log("Login successful:", response.data);
     localStorage.setItem("authToken", response.data.token);
 
     alert("Login successful!");
     navigate("/")
   } catch (error) {
-    console.error("Login error:", error);
-    alert("Failed to login.");
+    if ( error.response.data.msg) {
+      alert(error.response.data.msg); 
+    } else {
+      console.error("Login error:", error);
+      alert("Failed to Login. Please try again.");
+    }
   }
 };
 
